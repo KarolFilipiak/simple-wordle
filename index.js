@@ -184,7 +184,40 @@ async function init() {
     target = await getTarget();
     setLoading(0);
     console.log(`TARGET WORD: ${target}`)
+    
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile){
+        const mobilesection = document.createElement("section");
+        const mobileprompt = document.createElement("input");
+        mobilesection.className = "test"
+        mobileprompt.placeholder = "tap here to input letters"
+        mobileprompt.className = "tester"
+        mobileprompt.oninput = (e) => {
+            if (!isLoading && row < 7) {
+                console.log(`input: ${e.target.value}`);
+                if (isLetter(e.target.value)) {
+                    if (word.length < 5) {
+                        keyTiles[5 * (row-1) + word.length].textContent = e.target.value.toUpperCase();
+                        word += e.target.value.toLowerCase();
+                    } else {
+                        keyTiles[5 * (row-1) + word.length - 1].textContent = e.target.value.toUpperCase();
+                        word = word.substring(0, word.length - 1) + e.target.value.toLowerCase();
+                    }
+
+                } else if (e.target.value == "Backspace") {
+                    handleBackspace();
+
+                } else if (e.target.value == "Enter") {
+                    handleEnter();
+                }
+            }
+            e.target.value = "";
+        }
+        mobilesection.appendChild(mobileprompt)
+        document.body.appendChild(mobilesection);
+    }
     processInput();
+
 }
 
 init();
